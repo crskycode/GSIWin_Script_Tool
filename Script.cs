@@ -317,15 +317,17 @@ namespace GSIWin_Script_Tool
                 {
                     if (!exportAll)
                     {
-                        if (item.Item2.Length > 0 && item.Item2[0] < 0x81)
+                        if (item.Item2.Length > 0 && item.Item2[0] < 0x81 && item.Item2[0] != '\n' && item.Item2[0] != '\r' && item.Item2[0] != '\t')
                         {
                             // Ignore file name, etc.
                             continue;
                         }
                     }
 
-                    writer.WriteLine($"◇{item.Item1:X8}◇{item.Item2}");
-                    writer.WriteLine($"◆{item.Item1:X8}◆{item.Item2}");
+                    var str = EscapeString(item.Item2);
+
+                    writer.WriteLine($"◇{item.Item1:X8}◇{str}");
+                    writer.WriteLine($"◆{item.Item1:X8}◆{str}");
                     writer.WriteLine();
                 }
             }
@@ -374,7 +376,7 @@ namespace GSIWin_Script_Tool
                 // index of opcode
                 int index = int.Parse(m.Groups[1].Value, NumberStyles.HexNumber);
                 // translated string
-                var str = m.Groups[2].Value;
+                var str = UnespaceString(m.Groups[2].Value);
 
                 // Check index valid
                 if (!strings.ContainsKey(index))
@@ -442,6 +444,24 @@ namespace GSIWin_Script_Tool
             }
 
             return _encoding.GetString(bytes.ToArray());
+        }
+
+        static string EscapeString(string input)
+        {
+            input = input.Replace("\r", "\\r");
+            input = input.Replace("\n", "\\n");
+            input = input.Replace("\t", "\\t");
+
+            return input;
+        }
+
+        static string UnespaceString(string input)
+        {
+            input = input.Replace("\\r", "\r");
+            input = input.Replace("\\n", "\n");
+            input = input.Replace("\\t", "\t");
+
+            return input;
         }
     }
 }
