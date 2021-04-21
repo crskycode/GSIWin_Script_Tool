@@ -104,7 +104,7 @@ namespace GSIWin_Script_Tool
                     case 0x0B: // STR
                     case 0x33: // PUSH STR
                     {
-                        var args = reader.ReadCString();
+                        var args = reader.ReadCString(true);
                         Opcodes.Add(new Opcode(addr, code, args));
                         break;
                     }
@@ -297,7 +297,7 @@ namespace GSIWin_Script_Tool
                     case 0x0B:
                     case 0x33:
                     {
-                        var str = _encoding.GetString(opcode.Args);
+                        var str = ReadCString(opcode.Args);
                         list.Add(new TString(i, str));
                         break;
                     }
@@ -444,6 +444,12 @@ namespace GSIWin_Script_Tool
             }
 
             return _encoding.GetString(bytes.ToArray());
+        }
+
+        static string ReadCString(byte[] buffer)
+        {
+            var bytes = buffer.TakeWhile(c => c != 0).ToArray();
+            return _encoding.GetString(bytes);
         }
 
         static string EscapeString(string input)
