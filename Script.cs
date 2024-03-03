@@ -421,7 +421,7 @@ namespace GSIWin_Script_Tool
                 {
                     break;
                 }
-                if (c >= 0x81 && c <= 0x9F || (c + 0x20) <= 0xF)
+                if (c >= 0x81 && c <= 0x9F || (byte)(c + 0x20) <= 0xF)
                 {
                     bytes.Add(c);
                     c = buffer[i++];
